@@ -5,41 +5,42 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace TrapperKeeper
+namespace TrapperKeeper.Services
 {
-    class Program
+    internal class PassWordKeeper
     {
-        static void Test(string[] args)
+        internal void KeepThis(string password, string passwordFor)
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            var keptPassword = KeepMyPassword(args[0]);
-            Console.WriteLine(keptPassword);
-            Console.WriteLine(WhatsMyPassword(keptPassword));
+            var keptPassword = KeepMyPassword(password);
             var serialized = JsonSerializer.Serialize(keptPassword);
-            Console.WriteLine(serialized);
             File.WriteAllText(@"E:\trappedPasswords.json", serialized);
             var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
             KeptPassword currentPasswords = JsonSerializer.Deserialize<KeptPassword>(objectFromFile);
             Console.WriteLine(WhatsMyPassword(currentPasswords));
         }
 
+        internal KeptPassword GetMyPasswords()
+        {
+            throw new NotImplementedException();
+        }
+
         private static KeptPassword KeepMyPassword([NotNull] string password)
         {
-            using var aesManaged = new AesManaged{Key = GetKey(), Mode = CipherMode.CBC};
+            using var aesManaged = new AesManaged { Key = GetKey(), Mode = CipherMode.CBC };
             using ICryptoTransform encryptor = aesManaged.CreateEncryptor(aesManaged.Key, aesManaged.IV);
             using var memoryStream = new MemoryStream();
             using var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
-            using(var streamWriter = new StreamWriter(cryptoStream))
+            using (var streamWriter = new StreamWriter(cryptoStream))
             {
                 streamWriter.Write(password);
             }
 
             return new KeptPassword(aesManaged.IV, Convert.ToBase64String(memoryStream.ToArray()));
         }
-        
+
         private static string WhatsMyPassword([NotNull] KeptPassword keptPassword)
         {
-            using var aesManaged = new AesManaged{Key = GetKey(), IV = keptPassword.IV, Mode = CipherMode.CBC};
+            using var aesManaged = new AesManaged { Key = GetKey(), IV = keptPassword.IV, Mode = CipherMode.CBC };
             using ICryptoTransform encryptor = aesManaged.CreateDecryptor(aesManaged.Key, aesManaged.IV);
             using var memoryStream = new MemoryStream(Convert.FromBase64String(keptPassword.EncryptedValue));
             using var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Read);
@@ -67,7 +68,7 @@ namespace TrapperKeeper
     [Serializable]
     public class KeptPassword
     {
-        public KeptPassword(){}
+        public KeptPassword() { }
         public string EncryptedValue { get; set; }
 
         public byte[] IV { get; set; }

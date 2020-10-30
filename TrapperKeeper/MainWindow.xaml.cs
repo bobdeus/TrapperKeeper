@@ -12,17 +12,22 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TrapperKeeper.Services;
 
 namespace TrapperKeeper
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly PassWordKeeper _passWordKeeper;
         public MainWindow()
         {
             InitializeComponent();
+            _passWordKeeper = new PassWordKeeper();
+        }
+
+        private void savePassword_Click(object sender, RoutedEventArgs e)
+        {
+            _passWordKeeper.KeepThis(password.Text, passwordFor.Text);
         }
     }
 }
