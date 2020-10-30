@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
@@ -19,8 +18,9 @@ namespace TrapperKeeper
             var serialized = JsonSerializer.Serialize(keptPassword);
             Console.WriteLine(serialized);
             File.WriteAllText(@"E:\trappedPasswords.json", serialized);
-            var deserializedFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
-            KeptPassword deserialized = JsonSerializer.Deserialize<KeptPassword>(deserializedFromFile);
+            var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
+            KeptPassword currentPasswords = JsonSerializer.Deserialize<KeptPassword>(objectFromFile);
+            Console.WriteLine(WhatsMyPassword(currentPasswords));
         }
 
         private static KeptPassword KeepMyPassword([NotNull] string password)
@@ -53,20 +53,14 @@ namespace TrapperKeeper
             byte[] unHashedKey;
             try
             {
-                unHashedKey = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TRAPPER_KEEPER_PASSWORD"));
+                unHashedKey = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("TRAPPER_KEEPER_PASSWORD") ?? throw new ArgumentNullException());
             }
             catch (ArgumentNullException e)
             {
-                throw new InvalidOperationException("You must set a \"TRAPPER_KEEPER_PASSWORD\" in your environment variables.");
+                throw new InvalidOperationException("You must set a \"TRAPPER_KEEPER_PASSWORD\" in your environment variables.", e);
             }
 
             return sha256Managed.ComputeHash(unHashedKey);
-        }
-        private static byte[] GetIv()
-        {
-            using var md5Managed = new MD5CryptoServiceProvider();
-            var unHashedIv = Encoding.UTF8.GetBytes("iv");
-            return md5Managed.ComputeHash(unHashedIv);
         }
     }
 
