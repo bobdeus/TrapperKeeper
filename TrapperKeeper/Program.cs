@@ -9,7 +9,7 @@ namespace TrapperKeeper
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Test(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
             var keptPassword = KeepMyPassword(args[0]);
