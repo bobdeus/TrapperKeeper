@@ -1,30 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Windows.Documents;
 
 namespace TrapperKeeper.Services
 {
     internal class PassWordKeeper
     {
+        private List<KeptPassword> passwords;
+
+        internal PassWordKeeper()
+        {
+            passwords = new List<KeptPassword>();
+        }
         internal void KeepThis(string password, string passwordFor)
         {
-            var keptPassword = KeepMyPassword(password);
-            var serialized = JsonSerializer.Serialize(keptPassword);
+            var keptPassword = KeepMyPassword(password, passwordFor);
+            passwords.Add(keptPassword);
+            var serialized = JsonSerializer.Serialize(passwords);
             File.WriteAllText(@"E:\trappedPasswords.json", serialized);
             var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
-            KeptPassword currentPasswords = JsonSerializer.Deserialize<KeptPassword>(objectFromFile);
-            Console.WriteLine(WhatsMyPassword(currentPasswords));
+            passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
         }
 
-        internal KeptPassword GetMyPasswords()
+        internal List<KeptPassword> GetMyPasswords()
         {
-            throw new NotImplementedException();
+            var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
+            passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
+            return passwords;
         }
 
-        private static KeptPassword KeepMyPassword([NotNull] string password)
+        private static KeptPassword KeepMyPassword([NotNull] string password, [NotNull] string passwordFor)
         {
             using var aesManaged = new AesManaged { Key = GetKey(), Mode = CipherMode.CBC };
             using ICryptoTransform encryptor = aesManaged.CreateEncryptor(aesManaged.Key, aesManaged.IV);
@@ -35,7 +45,7 @@ namespace TrapperKeeper.Services
                 streamWriter.Write(password);
             }
 
-            return new KeptPassword(aesManaged.IV, Convert.ToBase64String(memoryStream.ToArray()));
+            return new KeptPassword(aesManaged.IV, Convert.ToBase64String(memoryStream.ToArray()), passwordFor);
         }
 
         private static string WhatsMyPassword([NotNull] KeptPassword keptPassword)
@@ -70,12 +80,14 @@ namespace TrapperKeeper.Services
     {
         public KeptPassword() { }
         public string EncryptedValue { get; set; }
+        public string PasswordFor { get; set; }
 
         public byte[] IV { get; set; }
-        internal KeptPassword([NotNull] byte[] iv, [NotNull] string encryptedValue)
+        internal KeptPassword([NotNull] byte[] iv, [NotNull] string encryptedValue, [NotNull] string passwordFor)
         {
             IV = iv;
             EncryptedValue = encryptedValue;
+            PasswordFor = passwordFor;
         }
 
         public override string ToString()

@@ -26,29 +26,59 @@ namespace TrapperKeeper
             InitializeComponent();
             _passWordKeeper = new PassWordKeeper();
 
-            DataTable dt = new DataTable();
-            DataRow dr;
+            var dataTable = new DataTable();
 
-            dt.Columns.Add(new DataColumn("Password For", typeof(string)));
-            dt.Columns.Add(new DataColumn("Password Encrypted", typeof(string)));
+            var siteColumn = new DataColumn("Password For", typeof(string));
+            
+            
+            DataGridColumn dataGridColumn = new DataGridTextColumn();
+            DataGridColumn dataGridColumn2 = new DataGridTemplateColumn();
+            dataGridColumn.Header = "Password For";
+            CurrentPasswords.Columns.Add(dataGridColumn);
+            
+            
+            
+            DataGridTemplateColumn buttonColumn = new DataGridTemplateColumn();
+            buttonColumn.Header = "My Button";
+            DataTemplate buttonTemplate = new DataTemplate();
+            FrameworkElementFactory buttonFactory = new FrameworkElementFactory(typeof(Button));
+            buttonTemplate.VisualTree = buttonFactory;
+            //add handler or you can add binding to command if you want to handle click
+            buttonFactory.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler((sender, args) => { }));
+            buttonFactory.SetBinding(Button.ContentProperty, new Binding("#"));
+            buttonColumn.CellTemplate = buttonTemplate;
+            CurrentPasswords.Columns.Add(buttonColumn);
 
-            for (int i = 0; i < 5; i++)
+            var row = new {sdf = "asdf", asdfae = new Button() };
+            CurrentPasswords.Items.Add(row);
+            
+            
+            
+            
+            dataTable.Columns.Add(siteColumn);
+            dataTable.Columns.Add(new DataColumn("Password Encrypted", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Actions", typeof(Button)));
+
+            foreach (var keptPassword in _passWordKeeper.GetMyPasswords())
             {
-                dr = dt.NewRow();
+                var dataRow = dataTable.NewRow();
 
-                dr[0] = i;
-                dr[1] = "Item " + i.ToString();
+                dataRow[0] = keptPassword.PasswordFor;
+                dataRow[1] = keptPassword.EncryptedValue;
+                dataRow[2] = new Button();
 
-                dt.Rows.Add(dr);
+                dataTable.Rows.Add(dataRow);
             }
 
-            DataView dv = new DataView(dt);
-            currentPasswords.ItemsSource = dv;
+            var dataView = new DataView(dataTable);
+            // CurrentPasswords.ItemsSource = dataView;
         }
 
         private void savePassword_Click(object sender, RoutedEventArgs e)
         {
-            _passWordKeeper.KeepThis(password.Text, passwordFor.Text);
+            _passWordKeeper.KeepThis(Password.Text, PasswordFor.Text);
+            
+            // CurrentPasswords.ItemsSource = _passWordKeeper.GetMyPasswords();
         }
     }
 }
