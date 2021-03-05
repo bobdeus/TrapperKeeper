@@ -5,33 +5,32 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Windows.Documents;
 
 namespace TrapperKeeper.Services
 {
     internal class PassWordKeeper
     {
-        private List<KeptPassword> passwords;
+        private List<KeptPassword> _passwords;
 
         internal PassWordKeeper()
         {
-            passwords = new List<KeptPassword>();
+            _passwords = new List<KeptPassword>();
         }
         internal void KeepThis(string password, string passwordFor)
         {
             var keptPassword = KeepMyPassword(password, passwordFor);
-            passwords.Add(keptPassword);
-            var serialized = JsonSerializer.Serialize(passwords);
+            _passwords.Add(keptPassword);
+            var serialized = JsonSerializer.Serialize(_passwords);
             File.WriteAllText(@"E:\trappedPasswords.json", serialized);
             var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
-            passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
+            _passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
         }
 
         internal List<KeptPassword> GetMyPasswords()
         {
             var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
-            passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
-            return passwords;
+            _passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
+            return _passwords;
         }
 
         private static KeptPassword KeepMyPassword([NotNull] string password, [NotNull] string passwordFor)
