@@ -72,6 +72,12 @@ namespace TrapperKeeper.Services
 
             return sha256Managed.ComputeHash(unHashedKey);
         }
+
+        public string GetPassword(string passwordForName)
+        {
+            // TODO: This needs to be handled via lookup using Linq
+            return WhatsMyPassword(_passwords[0]);
+        }
     }
 
     [Serializable]
