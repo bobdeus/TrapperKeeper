@@ -19,15 +19,15 @@ namespace TrapperKeeper
         {
             // TODO: This needs to be much more dynamic and less hard coded..
             // Should use reflection to get the column names?
-            var passwordForColumn = new DataGridViewColumn {Name = "Password For"};
+            var passwordForColumn = new DataGridViewColumn {Name = "Password For", Width = 400};
             var passwordForTextBoxCell = new DataGridViewTextBoxCell {ValueType = typeof(string)};
             passwordForColumn.CellTemplate = passwordForTextBoxCell;
 
-            var passwordColumn = new DataGridViewColumn {Name = "Password"};
+            var passwordColumn = new DataGridViewColumn {Name = "Password", Width = 400};
             var passwordTextBoxCell = new DataGridViewTextBoxCell {ValueType = typeof(string)};
             passwordColumn.CellTemplate = passwordTextBoxCell;
 
-            var showPasswordColumn = new DataGridViewButtonColumn {Name = "showPassword", Text = "Show"};
+            var showPasswordColumn = new DataGridViewButtonColumn {Name = "showPassword", Text = "Show", Width = 100};
             var showPasswordButtonCell = new DataGridViewButtonCell
                 {ValueType = typeof(Button), UseColumnTextForButtonValue = true};
             showPasswordColumn.CellTemplate = showPasswordButtonCell;
@@ -52,10 +52,9 @@ namespace TrapperKeeper
             passwordDataView.Rows.Add(passwords[0].PasswordFor, "*******");
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void addPasswordButton_Click(object sender, EventArgs e)
         {
-            // TODO Need to add more passwords to the keeper
-            throw new NotImplementedException();
+            _passWordKeeper.KeepThis(passwordTextBox.Text, passwordForTextBox.Text);
         }
     }
 }
