@@ -29,6 +29,7 @@ namespace TrapperKeeper.Services
         internal List<KeptPassword> GetMyPasswords()
         {
             var objectFromFile = File.ReadAllText(@"E:\trappedPasswords.json");
+            if (string.IsNullOrEmpty(objectFromFile)) return new List<KeptPassword>();
             _passwords = JsonSerializer.Deserialize<List<KeptPassword>>(objectFromFile);
             return _passwords;
         }

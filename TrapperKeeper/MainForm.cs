@@ -48,13 +48,20 @@ namespace TrapperKeeper
 
         private void UpdateCurrentPasswordData()
         {
+            passwordDataView.Rows.Clear();
             var passwords = _passWordKeeper.GetMyPasswords();
-            passwordDataView.Rows.Add(passwords[0].PasswordFor, "*******");
+            if (passwords.Count == 0) return;
+
+            foreach (var keptPassword in passwords)
+            {
+                passwordDataView.Rows.Add(keptPassword.PasswordFor, "*******");
+            }
         }
 
         private void addPasswordButton_Click(object sender, EventArgs e)
         {
             _passWordKeeper.KeepThis(passwordTextBox.Text, passwordForTextBox.Text);
+            UpdateCurrentPasswordData();
         }
     }
 }
