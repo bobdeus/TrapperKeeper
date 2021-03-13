@@ -53,10 +53,10 @@
             this.passwordDataView.AllowUserToAddRows = false;
             this.passwordDataView.AllowUserToDeleteRows = false;
             this.passwordDataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.passwordDataView.Location = new System.Drawing.Point(403, 12);
+            this.passwordDataView.Location = new System.Drawing.Point(366, 12);
             this.passwordDataView.Name = "passwordDataView";
             this.passwordDataView.RowTemplate.Height = 24;
-            this.passwordDataView.Size = new System.Drawing.Size(970, 600);
+            this.passwordDataView.Size = new System.Drawing.Size(1100, 600);
             this.passwordDataView.TabIndex = 2;
             // 
             // passwordForTextBox
@@ -95,7 +95,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1385, 622);
+            this.ClientSize = new System.Drawing.Size(1479, 622);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.passwordTextBox);

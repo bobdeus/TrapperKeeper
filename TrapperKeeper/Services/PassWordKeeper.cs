@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -77,7 +78,8 @@ namespace TrapperKeeper.Services
         public string GetPassword(string passwordForName)
         {
             // TODO: This needs to be handled via lookup using Linq
-            return WhatsMyPassword(_passwords[0]);
+            var passwords = _passwords.Where(name => name.PasswordFor.Equals(passwordForName)).ToList();
+            return WhatsMyPassword(passwords[0]);
         }
     }
 
