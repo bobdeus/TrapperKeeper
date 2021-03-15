@@ -7,9 +7,10 @@ namespace TrapperKeeper
 {
     public partial class MainForm : Form
     {
+        private const int NameColumnIndex = 0;
+        private const int PasswordColumnIndex = 1;
         private readonly PassWordKeeper _passWordKeeper = new PassWordKeeper();
-        const int NameColumnIndex = 0;
-        const int PasswordColumnIndex = 1;
+
         public MainForm()
         {
             InitializeComponent();
@@ -20,7 +21,7 @@ namespace TrapperKeeper
         private void PreparePasswordDataView()
         {
             passwordDataView.RowHeadersVisible = false;
-            
+
             // TODO: This needs to be much more dynamic and less hard coded..
             // Should use reflection to get the column names?
             var passwordForColumn = new DataGridViewColumn {Name = "Password For", Width = 400};
@@ -35,8 +36,9 @@ namespace TrapperKeeper
             var showPasswordButtonCell = new DataGridViewButtonCell
                 {ValueType = typeof(Button), UseColumnTextForButtonValue = true};
             showPasswordColumn.CellTemplate = showPasswordButtonCell;
-            
-            var copyPasswordColumn = new DataGridViewButtonColumn {Name = "Copy Password", Text = "Copy To Clipboard", Width = 190};
+
+            var copyPasswordColumn = new DataGridViewButtonColumn
+                {Name = "Copy Password", Text = "Copy To Clipboard", Width = 190};
             var copyPasswordButtonCell = new DataGridViewButtonCell
                 {ValueType = typeof(Button), UseColumnTextForButtonValue = true};
             copyPasswordColumn.CellTemplate = copyPasswordButtonCell;
@@ -45,7 +47,7 @@ namespace TrapperKeeper
             passwordDataView.Columns.Add(passwordColumn);
             passwordDataView.Columns.Add(showPasswordColumn);
             passwordDataView.Columns.Add(copyPasswordColumn);
-            
+
             // Adding this event to the entire DataGridView because I am not sure how to get the click location
             // in the DataGridView to the correct password button.
             passwordDataView.CellClick += showButton_Click;
@@ -61,13 +63,14 @@ namespace TrapperKeeper
             //
             // Since I have done what I have done, we need to validate the button click to ensure
             // the correct type of button was clicked to honor this event.
-            var isNotValidSelection = dataGridView.SelectedCells.Count > 1 || dataGridView.SelectedCells.IsNotValidButton();
+            var isNotValidSelection =
+                dataGridView.SelectedCells.Count > 1 || dataGridView.SelectedCells.IsNotValidButton();
             if (e.ColumnIndex < 0 || isNotValidSelection) return;
 
             var rowIndex = e.RowIndex;
             var passwordName = dataGridView.Rows[rowIndex].Cells[NameColumnIndex].Value.ToString();
             var passwordValue = _passWordKeeper.GetPassword(passwordName);
-            
+
             if (dataGridView.SelectedCells.IsShowButton())
             {
                 UpdateCurrentPasswordData();
@@ -87,10 +90,7 @@ namespace TrapperKeeper
             var passwords = _passWordKeeper.GetMyPasswords();
             if (passwords.Count == 0) return;
 
-            foreach (var keptPassword in passwords)
-            {
-                passwordDataView.Rows.Add(keptPassword.PasswordFor, "*******");
-            }
+            foreach (var keptPassword in passwords) passwordDataView.Rows.Add(keptPassword.PasswordFor, "*******");
         }
 
         private void addPasswordButton_Click(object sender, EventArgs e)
