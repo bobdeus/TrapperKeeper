@@ -67,7 +67,6 @@ namespace TrapperKeeper
             var rowIndex = e.RowIndex;
             var passwordName = dataGridView.Rows[rowIndex].Cells[NameColumnIndex].Value.ToString();
             var passwordValue = _passWordKeeper.GetPassword(passwordName);
-
             
             if (dataGridView.SelectedCells.IsShowButton())
             {
